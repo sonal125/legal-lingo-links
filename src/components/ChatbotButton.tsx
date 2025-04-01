@@ -7,15 +7,16 @@ import { useLanguage } from '@/contexts/LanguageContext';
 export function ChatbotButton() {
   const { translate } = useLanguage();
   
-  const openChatbot = () => {
-    // Open the chatbot page in a new tab
-    window.open('/chatbot', '_blank');
+  const openSiteInNewTab = () => {
+    // Open the main site in a new tab
+    const siteUrl = window.location.origin;
+    window.open(siteUrl, '_blank');
   };
 
   return (
     <Button 
       className="fixed bottom-4 right-4 rounded-full shadow-lg z-50 w-12 h-12 p-0"
-      onClick={openChatbot}
+      onClick={openSiteInNewTab}
     >
       <MessageSquare className="h-5 w-5" />
     </Button>

@@ -17,6 +17,7 @@ import ShareIssue from "./pages/ShareIssue";
 import ReplyClient from "./pages/ReplyClient";
 import LegalModules from "./pages/LegalModules";
 import Messages from "./pages/Messages";
+import { Chatbot } from "./components/Chatbot";
 
 // Protected Route component
 const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
@@ -46,6 +47,7 @@ const App = () => (
               <Route path="/" element={<Index />} />
               <Route path="/sign-in" element={<SignIn />} />
               <Route path="/sign-up" element={<SignUp />} />
+              <Route path="/chatbot" element={<div className="h-screen"><Chatbot /></div>} />
               
               {/* Protected routes */}
               <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />

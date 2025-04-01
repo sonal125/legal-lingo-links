@@ -3,15 +3,13 @@ import React from 'react';
 import { MessageSquare } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useLanguage } from '@/contexts/LanguageContext';
-import { useNavigate } from 'react-router-dom';
 
 export function ChatbotButton() {
   const { translate } = useLanguage();
-  const navigate = useNavigate();
   
   const openChatbot = () => {
-    // Navigate to the chatbot page in the same tab
-    navigate('/chatbot');
+    // Open the chatbot page in a new tab
+    window.open('/chatbot', '_blank');
   };
 
   return (

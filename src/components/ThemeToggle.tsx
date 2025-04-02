@@ -1,7 +1,7 @@
 
 import { Moon, Sun, Palette } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { useNextThemes } from "@/contexts/ThemeContext";
+import { useTheme } from "@/contexts/ThemeContext";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -14,7 +14,7 @@ import {
 import { useLanguage } from "@/contexts/LanguageContext";
 
 export function ThemeToggle() {
-  const { setTheme, theme, themes } = useNextThemes();
+  const { setTheme, theme, themes } = useTheme();
   const { translate } = useLanguage();
   
   return (

@@ -1,6 +1,6 @@
 
 import React, { createContext, useContext, useEffect, useState } from "react";
-import { ThemeProvider as NextThemesProvider } from "next-themes";
+import { ThemeProvider as NextThemesProvider, useTheme as useNextTheme } from "next-themes";
 
 export interface ThemeProviderProps {
   children: React.ReactNode;
@@ -30,7 +30,7 @@ export function ThemeProvider({
       enableSystem
       {...props}
     >
-      {children}
+      <ThemeContextProvider>{children}</ThemeContextProvider>
     </NextThemesProvider>
   );
 }
@@ -54,6 +54,36 @@ const defaultThemeContext: ThemeContextType = {
 
 const ThemeContext = createContext<ThemeContextType>(defaultThemeContext);
 
+// Create a provider that uses next-themes under the hood
+const ThemeContextProvider = ({ children }: { children: React.ReactNode }) => {
+  // Use the next-themes hook directly
+  const { theme, setTheme, systemTheme } = useNextTheme();
+  
+  // Define all available themes
+  const themes = ["light", "dark", "blue", "purple", "green", "orange", "system"];
+  
+  // Determine if the current theme is dark
+  const isDark = 
+    theme === "dark" || 
+    (theme === "system" && systemTheme === "dark") ||
+    theme === "blue";
+  
+  const value = {
+    theme,
+    setTheme,
+    systemTheme,
+    themes,
+    isDark
+  };
+  
+  return (
+    <ThemeContext.Provider value={value}>
+      {children}
+    </ThemeContext.Provider>
+  );
+};
+
+// Export a hook to use the theme context
 export const useTheme = () => {
   const context = useContext(ThemeContext);
   if (!context) {
@@ -62,31 +92,9 @@ export const useTheme = () => {
   return context;
 };
 
-// This function properly accesses the next-themes context
+// Export this for backward compatibility
 export function useNextThemes() {
-  // Get the context, but properly type it to avoid type errors
-  const context = useContext((NextThemesProvider as any)._context);
-  
-  if (!context) {
-    return defaultThemeContext;
-  }
-  
-  const themeValue = context.theme || 'system';
-  const systemThemeValue = context.systemTheme || 'light';
-  const setThemeFunction = context.setTheme || (() => {});
-  
-  // Define all available themes
-  const themes = ["light", "dark", "blue", "purple", "green", "orange", "system"];
-  
-  return {
-    theme: themeValue,
-    setTheme: setThemeFunction,
-    systemTheme: systemThemeValue,
-    themes,
-    isDark: themeValue === "dark" || 
-           (themeValue === "system" && systemThemeValue === "dark") ||
-           themeValue === "blue",
-  };
+  return useTheme();
 }
 
 export const ThemeConsumer = ({
@@ -94,6 +102,6 @@ export const ThemeConsumer = ({
 }: {
   children: (props: ThemeContextType) => React.ReactNode;
 }) => {
-  const themeContext = useNextThemes();
+  const themeContext = useTheme();
   return <>{children(themeContext)}</>;
 };

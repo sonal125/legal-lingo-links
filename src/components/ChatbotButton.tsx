@@ -9,11 +9,11 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
-import { useNextThemes } from '@/contexts/ThemeContext';
+import { useTheme } from '@/contexts/ThemeContext';
 
 export function ChatbotButton() {
   const { translate } = useLanguage();
-  const { theme } = useNextThemes();
+  const { theme } = useTheme();
   
   const openChatbot = () => {
     // Navigate to the chatbot page

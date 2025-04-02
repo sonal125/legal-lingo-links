@@ -40,7 +40,7 @@ interface ThemeContextType {
   theme: string | undefined;
   setTheme: (theme: string) => void;
   systemTheme?: string;
-  themes?: string[];
+  themes: string[];
   isDark: boolean;
 }
 
@@ -64,16 +64,23 @@ export const useTheme = () => {
 
 // This function properly accesses the next-themes context
 export function useNextThemes() {
-  const { resolvedTheme, theme, setTheme, systemTheme } = useContext(
-    (NextThemesProvider as any)._context ?? createContext({})
-  );
+  // Fix the access to next-themes context
+  const context = useContext((NextThemesProvider as any)._context || createContext(defaultThemeContext));
+  const theme = context.theme || 'system';
+  const systemTheme = context.systemTheme || 'light';
+  const setTheme = context.setTheme || (() => {});
+  
+  // Define all available themes
+  const themes = ["light", "dark", "blue", "purple", "green", "orange", "system"];
   
   return {
     theme,
     setTheme,
     systemTheme,
-    themes: ["light", "dark", "system"],
-    isDark: theme === "dark" || (theme === "system" && systemTheme === "dark"),
+    themes,
+    isDark: theme === "dark" || 
+           (theme === "system" && systemTheme === "dark") ||
+           theme === "blue",
   };
 }
 

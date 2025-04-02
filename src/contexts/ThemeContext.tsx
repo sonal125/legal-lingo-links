@@ -64,23 +64,28 @@ export const useTheme = () => {
 
 // This function properly accesses the next-themes context
 export function useNextThemes() {
-  // Fix the access to next-themes context
-  const context = useContext((NextThemesProvider as any)._context || createContext(defaultThemeContext));
-  const theme = context.theme || 'system';
-  const systemTheme = context.systemTheme || 'light';
-  const setTheme = context.setTheme || (() => {});
+  // Get the context, but properly type it to avoid type errors
+  const context = useContext((NextThemesProvider as any)._context);
+  
+  if (!context) {
+    return defaultThemeContext;
+  }
+  
+  const themeValue = context.theme || 'system';
+  const systemThemeValue = context.systemTheme || 'light';
+  const setThemeFunction = context.setTheme || (() => {});
   
   // Define all available themes
   const themes = ["light", "dark", "blue", "purple", "green", "orange", "system"];
   
   return {
-    theme,
-    setTheme,
-    systemTheme,
+    theme: themeValue,
+    setTheme: setThemeFunction,
+    systemTheme: systemThemeValue,
     themes,
-    isDark: theme === "dark" || 
-           (theme === "system" && systemTheme === "dark") ||
-           theme === "blue",
+    isDark: themeValue === "dark" || 
+           (themeValue === "system" && systemThemeValue === "dark") ||
+           themeValue === "blue",
   };
 }
 

@@ -20,7 +20,7 @@ export function ThemeToggle() {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Button variant="outline" size="icon" className="h-9 w-9">
+        <Button variant="outline" size="icon" className="h-9 w-9 transition-all duration-300 hover:scale-110">
           {theme === "dark" ? (
             <Moon className="h-[1.2rem] w-[1.2rem]" />
           ) : theme === "light" ? (

@@ -2,11 +2,30 @@
 import React, { createContext, useContext, useEffect, useState } from "react";
 import { ThemeProvider as NextThemesProvider, useTheme as useNextTheme } from "next-themes";
 
+// Define theme context type
+interface ThemeContextType {
+  theme: string | undefined;
+  setTheme: (theme: string) => void;
+  systemTheme?: string;
+  themes: string[];
+  isDark: boolean;
+}
+
+// Create the context with default values
+const ThemeContext = createContext<ThemeContextType>({
+  theme: undefined,
+  setTheme: () => {},
+  systemTheme: undefined,
+  themes: [],
+  isDark: false,
+});
+
 export interface ThemeProviderProps {
   children: React.ReactNode;
   defaultTheme?: string;
 }
 
+// Custom ThemeProvider component that wraps next-themes
 export function ThemeProvider({
   children,
   defaultTheme = "system",
@@ -35,28 +54,8 @@ export function ThemeProvider({
   );
 }
 
-// Create a context for easier theme access
-interface ThemeContextType {
-  theme: string | undefined;
-  setTheme: (theme: string) => void;
-  systemTheme?: string;
-  themes: string[];
-  isDark: boolean;
-}
-
-const defaultThemeContext: ThemeContextType = {
-  theme: undefined,
-  setTheme: () => {},
-  systemTheme: undefined,
-  themes: [],
-  isDark: false,
-};
-
-const ThemeContext = createContext<ThemeContextType>(defaultThemeContext);
-
-// Create a provider that uses next-themes under the hood
+// Internal provider component that uses next-themes hook
 const ThemeContextProvider = ({ children }: { children: React.ReactNode }) => {
-  // Use the next-themes hook directly
   const { theme, setTheme, systemTheme } = useNextTheme();
   
   // Define all available themes
@@ -83,20 +82,19 @@ const ThemeContextProvider = ({ children }: { children: React.ReactNode }) => {
   );
 };
 
-// Export a hook to use the theme context
+// Hook to use the theme context
 export const useTheme = () => {
   const context = useContext(ThemeContext);
-  if (!context) {
+  if (context === undefined) {
     throw new Error("useTheme must be used within a ThemeProvider");
   }
   return context;
 };
 
-// Export this for backward compatibility
-export function useNextThemes() {
-  return useTheme();
-}
+// For backward compatibility
+export const useNextThemes = useTheme;
 
+// Consumer component for render props pattern
 export const ThemeConsumer = ({
   children,
 }: {

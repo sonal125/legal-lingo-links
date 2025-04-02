@@ -35,6 +35,25 @@ export function ThemeProvider({
   );
 }
 
+// Create a context for easier theme access
+interface ThemeContextType {
+  theme: string | undefined;
+  setTheme: (theme: string) => void;
+  systemTheme?: string;
+  themes?: string[];
+  isDark: boolean;
+}
+
+const defaultThemeContext: ThemeContextType = {
+  theme: undefined,
+  setTheme: () => {},
+  systemTheme: undefined,
+  themes: [],
+  isDark: false,
+};
+
+const ThemeContext = createContext<ThemeContextType>(defaultThemeContext);
+
 export const useTheme = () => {
   const context = useContext(ThemeContext);
   if (!context) {
@@ -43,19 +62,17 @@ export const useTheme = () => {
   return context;
 };
 
-// Create a context for easier theme access
-const ThemeContext = createContext<ReturnType<typeof useNextThemes> | null>(null);
-
-function useNextThemes() {
-  const { theme, setTheme, systemTheme, themes } = useContext(
-    NextThemesProvider.Context
+// This function properly accesses the next-themes context
+export function useNextThemes() {
+  const { resolvedTheme, theme, setTheme, systemTheme } = useContext(
+    (NextThemesProvider as any)._context ?? createContext({})
   );
   
   return {
     theme,
     setTheme,
     systemTheme,
-    themes,
+    themes: ["light", "dark", "system"],
     isDark: theme === "dark" || (theme === "system" && systemTheme === "dark"),
   };
 }
@@ -63,7 +80,7 @@ function useNextThemes() {
 export const ThemeConsumer = ({
   children,
 }: {
-  children: (props: ReturnType<typeof useNextThemes>) => React.ReactNode;
+  children: (props: ThemeContextType) => React.ReactNode;
 }) => {
   const themeContext = useNextThemes();
   return <>{children(themeContext)}</>;

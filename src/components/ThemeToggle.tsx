@@ -11,7 +11,7 @@ import {
 import { useLanguage } from "@/contexts/LanguageContext";
 
 export function ThemeToggle() {
-  const { setTheme, theme } = useNextTheme();
+  const { setTheme } = useNextTheme();
   const { translate } = useLanguage();
   
   return (
